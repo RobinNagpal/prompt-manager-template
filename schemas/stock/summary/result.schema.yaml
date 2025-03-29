@@ -1,4 +1,3 @@
-$id: "http://example.com/schemas/stock/summary/result.schema.json"
 type: object
 properties:
   summary_text:

@@ -1,0 +1,27 @@
+{
+  "company": {
+    "name": "Acme Corp",
+    "industry": "Technology",
+    "ceo": "Jane Doe",
+    "financials": {
+      "revenue": 500,
+      "profit": 75,
+      "eps": 3.2,
+      "pe_ratio": 25,
+      "pb_ratio": 5
+    }
+  },
+  "market": {
+    "sector_growth": 8.5,
+    "trends": [
+      "Increasing adoption of cloud services",
+      "Rising competition",
+      "Regulatory changes"
+    ]
+  },
+  "historical": {
+    "last_close": 120,
+    "high": 150,
+    "low": 95
+  }
+}

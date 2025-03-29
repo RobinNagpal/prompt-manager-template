@@ -1,4 +1,3 @@
-$id: "http://example.com/schemas/stock/entities/stock.schema.json"
 type: object
 properties:
   current_price:

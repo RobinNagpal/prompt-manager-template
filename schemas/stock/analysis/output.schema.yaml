@@ -1,4 +1,3 @@
-$id: "http://example.com/schemas/stock/analysis/output.schema.json"
 type: object
 properties:
   analysis:

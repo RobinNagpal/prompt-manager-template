@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run-project": "tsx src/index.ts"
+    "run-project": "tsx src/index.ts",
+    "validate": "tsx src/validateTemplates.ts",
+    "generate-ts": "tsx src/generate-ts-models.ts"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
     "@types/aws-lambda": "^8.10.148",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.13.14",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   },
   "dependencies": {

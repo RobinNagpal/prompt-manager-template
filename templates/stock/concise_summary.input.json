@@ -1,0 +1,19 @@
+{
+  "company": {
+    "name": "Acme Corp",
+    "industry": "Technology",
+    "ceo": "Jane Doe",
+    "financials": {
+      "revenue": 500,
+      "profit": 75,
+      "eps": 3.2,
+      "pe_ratio": 25,
+      "pb_ratio": 5
+    }
+  },
+  "stock": {
+    "current_price": 123,
+    "volume": 1000000,
+    "sentiment": "Bullish"
+  }
+}

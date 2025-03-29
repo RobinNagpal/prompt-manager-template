@@ -1,7 +1,7 @@
-import path from 'path';
 import fs from 'fs-extra';
-import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
+import { globSync } from 'glob';
 import { compileFromFile } from 'json-schema-to-typescript';
+import path from 'path';
 
 // Define source and output directories for schemas.
 const SCHEMAS_DIR = path.join(__dirname, '..', 'schemas', 'stock');
@@ -20,6 +20,9 @@ async function generateTSModels(): Promise<void> {
       await fs.ensureDir(path.dirname(outputPath));
       // Generate the TypeScript interface from the schema file.
       const tsCode = await compileFromFile(file, {
+        additionalProperties: false,
+        inferStringEnumKeysFromValues: true,
+        strictIndexSignatures: true,
         bannerComment: '', // Remove auto-generated banner if desired.
       });
       await fs.writeFile(outputPath, tsCode);

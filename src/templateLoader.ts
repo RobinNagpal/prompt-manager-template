@@ -1,8 +1,8 @@
 import fs from 'fs';
-import path from 'path';
+import { glob } from 'glob';
 import matter, { GrayMatterFile } from 'gray-matter';
 import Handlebars from 'handlebars';
-import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
+import path from 'path';
 
 export interface TemplateMetadata {
   input_schema: string;
@@ -30,7 +30,7 @@ export function loadTemplates(templateDir: string): Promise<LoadedTemplate[]> {
       const parsed: GrayMatterFile<string> = matter(content) as matter.GrayMatterFile<string>;
       const metadata: TemplateMetadata = parsed.data as TemplateMetadata;
       const templateContent: string = parsed.content;
-      const compiledTemplate: Handlebars.TemplateDelegate = Handlebars.compile(templateContent);
+      const compiledTemplate: Handlebars.TemplateDelegate = Handlebars.compile(templateContent, { strict: true });
       return { filePath: file, metadata, templateContent, compiledTemplate };
     });
     resolve(templates);

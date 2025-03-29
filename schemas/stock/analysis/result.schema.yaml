@@ -1,4 +1,3 @@
-$id: "http://example.com/schemas/stock/analysis/result.schema.json"
 type: object
 properties:
   valuation:
