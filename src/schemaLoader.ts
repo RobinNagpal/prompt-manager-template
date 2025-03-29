@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
-import glob from 'glob';
+import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
 
 export interface SchemaMap {
   [schemaPath: string]: object;
@@ -14,25 +14,21 @@ export interface SchemaMap {
 export function loadSchemas(schemaDir: string): Promise<SchemaMap> {
   return new Promise((resolve, reject) => {
     const pattern: string = path.join(schemaDir, '**/*.yaml');
-    glob(pattern, (err: Error | null, files: string[]) => {
-      if (err) {
-        reject(err);
+    const files: string[] = glob.sync(pattern);
+
+    const schemas: SchemaMap = {};
+    files.forEach((file: string): void => {
+      const content: string = fs.readFileSync(file, 'utf8');
+      const loadedSchema: unknown = yaml.load(content);
+      if (typeof loadedSchema === 'object' && loadedSchema !== null) {
+        const relativePath: string = path.relative(schemaDir, file);
+        schemas[relativePath] = loadedSchema as object;
+      } else {
+        reject(new Error(`Schema in file ${file} is not an object`));
         return;
       }
-      const schemas: SchemaMap = {};
-      files.forEach((file: string): void => {
-        const content: string = fs.readFileSync(file, 'utf8');
-        const loadedSchema: unknown = yaml.load(content);
-        if (typeof loadedSchema === 'object' && loadedSchema !== null) {
-          const relativePath: string = path.relative(schemaDir, file);
-          schemas[relativePath] = loadedSchema as object;
-        } else {
-          reject(new Error(`Schema in file ${file} is not an object`));
-          return;
-        }
-      });
-      resolve(schemas);
     });
+    resolve(schemas);
   });
 }
 

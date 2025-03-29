@@ -20,17 +20,24 @@
   },
   "homepage": "https://github.com/RobinNagpal/prompt-manager-template#readme",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.148",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.13.14",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "@langchain/openai": "^0.5.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.17.1",
+    "aws-lambda": "^1.0.7",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.1",
     "gray-matter": "^4.0.3",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0",
-    "json-schema-to-typescript": "^15.0.4"
+    "json-schema-to-typescript": "^15.0.4",
+    "prettier": "^3.5.3"
   }
 }

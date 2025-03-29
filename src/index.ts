@@ -78,22 +78,18 @@ async function main(): Promise<void> {
             profit: 75,
             eps: 3.2,
             pe_ratio: 25,
-            pb_ratio: 5
-          }
+            pb_ratio: 5,
+          },
         },
         market: {
           sector_growth: 8.5,
-          trends: [
-            'Increasing adoption of cloud services',
-            'Rising competition',
-            'Regulatory changes'
-          ]
+          trends: ['Increasing adoption of cloud services', 'Rising competition', 'Regulatory changes'],
         },
         historical: {
           last_close: 120,
           high: 150,
-          low: 95
-        }
+          low: 95,
+        },
       };
       rendered = template.compiledTemplate(data);
     } else if (template.filePath.includes('concise_summary')) {
@@ -107,14 +103,14 @@ async function main(): Promise<void> {
             profit: 75,
             eps: 3.2,
             pe_ratio: 25,
-            pb_ratio: 5
-          }
+            pb_ratio: 5,
+          },
         },
         stock: {
           current_price: 123,
           volume: 1000000,
-          sentiment: 'Bullish'
-        }
+          sentiment: 'Bullish',
+        },
       };
       rendered = template.compiledTemplate(data);
     }

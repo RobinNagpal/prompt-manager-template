@@ -5,9 +5,8 @@ import path from 'path';
 import matter from 'gray-matter';
 import Handlebars from 'handlebars';
 import Ajv, { ErrorObject } from 'ajv';
-import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { OpenAI } from 'langchain/llms/openai';
-import { LLMChain } from 'langchain/chains';
+import { ChatOpenAI, OpenAI } from '@langchain/openai';
+import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import yaml from 'js-yaml';
 
 /**
@@ -30,7 +29,7 @@ function validateData(schema: object, data: unknown): { valid: boolean; errors?:
 /**
  * Lambda Handler.
  */
-export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   try {
     if (!event.body) {
       return {
@@ -39,7 +38,7 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
       };
     }
     const request = JSON.parse(event.body);
-    const { input, "template-id": templateId, llmProvider, model } = request;
+    const { input, 'template-id': templateId, llmProvider, model } = request;
 
     // Ensure required fields are present.
     if (!input || !templateId || !llmProvider || !model) {
@@ -99,19 +98,16 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
     const prompt = compiledTemplate(input);
 
     // Choose LLM based on llmProvider. Currently, only "openai" is supported.
-    let llm;
+
+    let llm: ChatOpenAI | undefined;
     if (llmProvider.toLowerCase() === 'openai') {
-      llm = new OpenAI({ modelName: model });
+      llm = new ChatOpenAI({ model: model });
     } else {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: `Unsupported llmProvider: ${llmProvider}` }),
       };
     }
-
-    // Create a LangChain LLMChain and call the model.
-    const chain = new LLMChain({ llm, prompt });
-    const result = await chain.call({ input: prompt });
 
     // Optionally validate the output if an output schema is provided.
     const outputSchemaRelative = frontmatter.output_schema;
@@ -128,6 +124,8 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
       const outputSchemaContent = loadFile(outputSchemaPath);
       const outputSchema = yaml.load(outputSchemaContent) as object;
 
+      const modelWithStructure = llm!.withStructuredOutput(outputSchema);
+      const result = await modelWithStructure.call({ input: prompt });
       const { valid: validOutput, errors: outputErrors } = validateData(outputSchema, result);
       if (!validOutput) {
         return {
@@ -138,16 +136,26 @@ export const handler = async (event: APIGatewayEvent): Promise<APIGatewayProxyRe
           }),
         };
       }
-    }
 
-    // Return the generated prompt and the result from the LLM.
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        prompt,
-        result,
-      }),
-    };
+      // Return the generated prompt and the result from the LLM.
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          prompt,
+          result,
+        }),
+      };
+    } else {
+      // Return the generated prompt and the result from the LLM.
+
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: 'Output schema not defined in template metadata',
+          errors: [],
+        }),
+      };
+    }
   } catch (error: unknown) {
     console.error('Lambda error:', error);
     return {

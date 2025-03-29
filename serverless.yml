@@ -7,6 +7,7 @@ provider:
 functions:
   promptHandler:
     handler: dist/lambda.handler
+    url: true
     events:
       - http:
           path: prompt
