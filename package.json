@@ -26,9 +26,11 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "fs-extra": "^11.3.0",
     "glob": "^11.0.1",
     "gray-matter": "^4.0.3",
     "handlebars": "^4.7.8",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "json-schema-to-typescript": "^15.0.4"
   }
 }

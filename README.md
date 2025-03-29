@@ -137,3 +137,59 @@ prompt-manager-template/
   Since all templates and schemas are stored in GitHub, it is easy to track changes and collaborate with team members.
 - **Template Compilation & Validation:**  
   The project compiles the Handlebars templates, injects dummy data, and validates the output against the resolved schemas. This ensures that any prompt sent to the LLM adheres to the defined structure.
+
+
+--
+## Generated Code Explanation
+
+- **TypeScript Model Generator:**  
+  Generates TypeScript interfaces from YAML schemas using `json-schema-to-typescript`.  
+  **Key Code:**  
+  ```ts
+  const tsCode = await compileFromFile(file, { bannerComment: '' });
+  ```  
+Output is saved under `generated-models/typescript/models/stock` with the same folder structure as the schemas.
+
+- **Python Pydantic Model Generator:**  
+  Uses `datamodel-code-generator` to produce Pydantic models from the YAML schemas.  
+  **Key Code:**
+  ```python
+  command = ['datamodel-codegen', '--input', input_path, '--output', output_path, '--input-file-type', 'yaml']
+  ```  
+  Models are saved under `generated-models/python/models/stock` following the schema folder hierarchy.
+
+## 2) Lambda Explanation
+
+- **Background & Purpose:**  
+  This Serverless Lambda function is built in TypeScript and uses LangChain JS to call an LLM (e.g. OpenAI). It validates input using JSON Schemas and compiles Handlebars templates to generate a dynamic prompt. The Lambda ensures the prompt is valid and returns structured output according to an output schema.
+
+- **Process Overview:**
+  1. **Input Validation:**  
+     The Lambda expects an event with `input`, `template-id`, `llmProvider`, and `model`. It loads the template (a `.prompt.hbs` file with YAML frontmatter) and validates the input against the specified input schema using Ajv.
+     ```ts
+     const { valid, errors } = validateData(inputSchema, input);
+     ```
+
+  2. **Template Compilation:**  
+     After successful validation, the Handlebars template is compiled with the input data to generate the final prompt.
+     ```ts
+     const prompt = compiledTemplate(input);
+     ```
+
+  3. **LLM Call:**  
+     The Lambda then uses LangChain JS (currently supports OpenAI) to send the generated prompt to the model.
+     ```ts
+     const chain = new LLMChain({ llm, prompt });
+     const result = await chain.call({ input: prompt });
+     ```
+
+  4. **Output Validation & Error Handling:**  
+     If an output schema is provided in the template metadata, the response from the LLM is validated. The function returns appropriate HTTP error codes (400, 404, 500) if any step fails.
+
+- **What It Does:**
+  - **Validates:** Ensures the incoming request data meets strict schema requirements.
+  - **Generates:** Creates a prompt by merging dynamic data with a pre-defined Handlebars template.
+  - **Calls:** Invokes the LLM using LangChain JS.
+  - **Validates Output:** Checks that the LLM's response follows the output schema.
+  - **Returns:** Provides structured results or error messages accordingly.
+```
