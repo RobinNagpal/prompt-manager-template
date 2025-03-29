@@ -1,0 +1,33 @@
+$id: "http://example.com/schemas/stock/entities/company.schema.json"
+type: object
+properties:
+  name:
+    type: string
+  industry:
+    type: string
+  ceo:
+    type: string
+  financials:
+    type: object
+    properties:
+      revenue:
+        type: number
+      profit:
+        type: number
+      eps:
+        type: number
+      pe_ratio:
+        type: number
+      pb_ratio:
+        type: number
+    required:
+      - revenue
+      - profit
+      - eps
+      - pe_ratio
+      - pb_ratio
+required:
+  - name
+  - industry
+  - ceo
+  - financials

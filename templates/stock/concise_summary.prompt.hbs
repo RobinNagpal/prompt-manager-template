@@ -1,0 +1,16 @@
+---
+input_schema: stock/summary/input.schema.yaml
+output_schema: stock/summary/output.schema.yaml
+---
+You are a market analyst. Based on the data provided, write a brief summary emphasizing the current trading status and key financial ratios.
+
+**Company Snapshot:**
+- **Name:** {{company.name}}
+- **Industry:** {{company.industry}}
+
+**Stock Data:**
+- Current Price: ${{stock.current_price}}
+- Volume: {{stock.volume}}
+- Sentiment: {{stock.sentiment}}
+
+Provide your concise summary below:

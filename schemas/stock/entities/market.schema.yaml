@@ -1,0 +1,12 @@
+$id: "http://example.com/schemas/stock/entities/market.schema.json"
+type: object
+properties:
+  sector_growth:
+    type: number
+  trends:
+    type: array
+    items:
+      type: string
+required:
+  - sector_growth
+  - trends

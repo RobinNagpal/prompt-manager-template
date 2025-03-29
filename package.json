@@ -1,0 +1,34 @@
+{
+  "name": "prompt-manager-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobinNagpal/prompt-manager-template.git"
+  },
+  "author": "robin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RobinNagpal/prompt-manager-template/issues"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "homepage": "https://github.com/RobinNagpal/prompt-manager-template#readme",
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/node": "^22.13.14",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "glob": "^11.0.1",
+    "gray-matter": "^4.0.3",
+    "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0"
+  }
+}

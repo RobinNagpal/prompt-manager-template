@@ -1,0 +1,9 @@
+$id: "http://example.com/schemas/stock/analysis/output.schema.json"
+type: object
+properties:
+  analysis:
+    $ref: "result.schema.yaml"
+  comments:
+    type: string
+required:
+  - analysis

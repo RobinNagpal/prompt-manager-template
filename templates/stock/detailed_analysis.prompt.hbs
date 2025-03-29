@@ -1,0 +1,30 @@
+---
+input_schema: stock/analysis/input.schema.yaml
+output_schema: stock/analysis/output.schema.yaml
+---
+You are a seasoned financial analyst. Given the following data, generate a comprehensive analysis covering valuation, risk factors, and potential market trends.
+
+**Company Details:**
+- **Name:** {{company.name}}
+- **Industry:** {{company.industry}}
+- **CEO:** {{company.ceo}}
+- **Financials:**
+- Revenue: ${{company.financials.revenue}}M
+- Profit: ${{company.financials.profit}}M
+- EPS: {{company.financials.eps}}
+- P/E Ratio: {{company.financials.pe_ratio}}
+- P/B Ratio: {{company.financials.pb_ratio}}
+
+**Market Overview:**
+- **Sector Growth:** {{market.sector_growth}}%
+- **Trends:**
+{{#each market.trends}}
+    - {{this}}
+{{/each}}
+
+**Historical Data:**
+- Last Close: ${{historical.last_close}}
+- 52-Week High: ${{historical.high}}
+- 52-Week Low: ${{historical.low}}
+
+Generate your detailed analysis below:
