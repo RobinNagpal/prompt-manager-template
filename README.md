@@ -78,6 +78,35 @@
 
 ## 3) Example Explanation
 
+```shell
+prompt-manager-template/
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── index.ts            // Main runner code
+│   ├── templateLoader.ts   // Loads .prompt.hbs files
+│   └── schemaLoader.ts     // Loads and dereferences YAML schemas
+├── templates/
+│   └── stock/
+│       ├── detailed_analysis.prompt.hbs
+│       └── concise_summary.prompt.hbs
+└── schemas/
+    └── stock/
+        ├── entities/
+        │     ├── company.schema.yaml
+        │     ├── market.schema.yaml
+        │     ├── historical.schema.yaml
+        │     └── stock.schema.yaml
+        ├── analysis/
+        │     ├── input.schema.yaml
+        │     ├── result.schema.yaml
+        │     └── output.schema.yaml
+        └── summary/
+              ├── input.schema.yaml
+              ├── result.schema.yaml
+              └── output.schema.yaml
+```
+
 ### Detailed Analysis Prompt Example
 - **Input Schema:**  
   Stored in `schemas/stock/analysis/input.schema.yaml`, this schema references common entity schemas (company, market, historical) located in the `entities/` folder.
