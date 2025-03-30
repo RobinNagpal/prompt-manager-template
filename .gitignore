@@ -40,3 +40,6 @@ academy-ui/next-env.d.ts
 
 academy-ui/.env
 data
+
+
+.venv

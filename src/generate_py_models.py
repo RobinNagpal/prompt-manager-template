@@ -3,11 +3,15 @@ import subprocess
 import sys
 
 # Define source and output directories for schemas.
-SCHEMAS_DIR = os.path.join(os.path.dirname(__file__), 'schemas', 'stock')
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'generated-models', 'python', 'models', 'stock')
+SCHEMAS_DIR = os.path.join(os.path.dirname(__file__), '..', 'schemas', 'stock')
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'generated-models', 'python', 'models', 'stock')
+
 
 def generate_py_models():
+    print(f"SCHEMAS_DIR: {SCHEMAS_DIR}")
     for root, dirs, files in os.walk(SCHEMAS_DIR):
+        print(f"Processing directory: {root}")
+        print(f"found files: {files}")
         for file in files:
             if file.endswith('.schema.yaml'):
                 input_path = os.path.join(root, file)
@@ -31,5 +35,7 @@ def generate_py_models():
                 else:
                     print(f"Successfully generated: {output_path}")
 
+
 if __name__ == "__main__":
+    print("Generating Python models from schemas...")
     generate_py_models()
