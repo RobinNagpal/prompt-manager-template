@@ -25,11 +25,13 @@
     "@types/aws-lambda": "^8.10.148",
     "@types/glob": "^8.1.0",
     "@types/node": "^22.13.14",
+    "serverless": "^4.9.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.9.3",
+    "@langchain/core": "^0.3.43",
     "@langchain/openai": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/js-yaml": "^4.0.9",

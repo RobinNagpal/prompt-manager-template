@@ -38,7 +38,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       };
     }
     const request = JSON.parse(event.body);
-    const { input, 'template-id': templateId, llmProvider, model } = request;
+    const { input, templateId: templateId, llmProvider, model } = request;
 
     // Ensure required fields are present.
     if (!input || !templateId || !llmProvider || !model) {
@@ -125,7 +125,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       const outputSchema = yaml.load(outputSchemaContent) as object;
 
       const modelWithStructure = llm!.withStructuredOutput(outputSchema);
-      const result = await modelWithStructure.call({ input: prompt });
+      const result = await modelWithStructure.invoke(prompt);
       const { valid: validOutput, errors: outputErrors } = validateData(outputSchema, result);
       if (!validOutput) {
         return {

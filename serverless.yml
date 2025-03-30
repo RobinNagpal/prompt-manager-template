@@ -1,14 +1,20 @@
 service: prompt-manager-lambda
-frameworkVersion: '2'
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs20.x
   region: us-east-1
 functions:
   promptHandler:
-    handler: dist/lambda.handler
+    handler: src/lambda.handler
     url: true
     events:
       - http:
           path: prompt
           method: post
+package:
+  patterns:
+    - "src/**"
+    - "node_modules/**"
+    - "package.json"
+    - "schemas/**"
+    - "templates/**"

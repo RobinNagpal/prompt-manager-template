@@ -6,3 +6,7 @@ install:
 
 generate-py-models:
 	source .venv/bin/activate && python -m src.generate_py_models
+
+
+sls-deploy:
+	yarn serverless deploy
