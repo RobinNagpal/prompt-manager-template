@@ -3,27 +3,44 @@ import { globSync } from 'glob';
 import { compileFromFile } from 'json-schema-to-typescript';
 import path from 'path';
 
-// Define source and output directories for schemas.
 const SCHEMAS_DIR = path.join(__dirname, '..', 'schemas', 'stock');
 const OUTPUT_DIR = path.join(__dirname, '..', 'generated-models', 'typescript', 'models', 'stock');
 
-async function generateTSModels(): Promise<void> {
-  // Find all schema files matching "*.schema.yaml" recursively.
-  const files = globSync(`${SCHEMAS_DIR}/**/*.schema.yaml`);
-
-  for (const file of files) {
+async function generateEntitiesTSModels(): Promise<void> {
+  const entityFiles = globSync(`${SCHEMAS_DIR}/entities/**/*.schema.yaml`);
+  for (const file of entityFiles) {
     try {
-      // Determine the relative path to recreate folder structure.
       const relativePath = path.relative(SCHEMAS_DIR, file);
       const outputPath = path.join(OUTPUT_DIR, relativePath).replace(/\.schema\.yaml$/, '.ts');
-      // Ensure the output directory exists.
       await fs.ensureDir(path.dirname(outputPath));
-      // Generate the TypeScript interface from the schema file.
       const tsCode = await compileFromFile(file, {
         additionalProperties: false,
         inferStringEnumKeysFromValues: true,
         strictIndexSignatures: true,
-        bannerComment: '', // Remove auto-generated banner if desired.
+        bannerComment: '',
+        declareExternallyReferenced: false,
+      });
+      await fs.writeFile(outputPath, tsCode);
+      console.log(`Generated Entity TypeScript model: ${outputPath}`);
+    } catch (error) {
+      console.error(`Error processing entity file ${file}:`, error);
+    }
+  }
+}
+
+async function generateOtherTSModels(): Promise<void> {
+  const otherFiles = globSync(`${SCHEMAS_DIR}/**/*.schema.yaml`, { ignore: [`${SCHEMAS_DIR}/entities/**/*.schema.yaml`] });
+  for (const file of otherFiles) {
+    try {
+      const relativePath = path.relative(SCHEMAS_DIR, file);
+      const outputPath = path.join(OUTPUT_DIR, relativePath).replace(/\.schema\.yaml$/, '.ts');
+      await fs.ensureDir(path.dirname(outputPath));
+      const tsCode = await compileFromFile(file, {
+        additionalProperties: false,
+        inferStringEnumKeysFromValues: true,
+        strictIndexSignatures: true,
+        bannerComment: '',
+        declareExternallyReferenced: true,
       });
       await fs.writeFile(outputPath, tsCode);
       console.log(`Generated TypeScript model: ${outputPath}`);
@@ -31,6 +48,11 @@ async function generateTSModels(): Promise<void> {
       console.error(`Error processing file ${file}:`, error);
     }
   }
+}
+
+async function generateTSModels(): Promise<void> {
+  await generateEntitiesTSModels();
+  await generateOtherTSModels();
 }
 
 generateTSModels().catch((error) => {

@@ -1,0 +1,73 @@
+$defs:
+  company.schema:
+    properties:
+      ceo:
+        type: string
+      financials:
+        properties:
+          eps:
+            type: number
+          pb_ratio:
+            type: number
+          pe_ratio:
+            type: number
+          profit:
+            type: number
+          revenue:
+            type: number
+        required:
+        - revenue
+        - profit
+        - eps
+        - pe_ratio
+        - pb_ratio
+        type: object
+      industry:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    - industry
+    - ceo
+    - financials
+    type: object
+  historical.schema:
+    properties:
+      high:
+        type: number
+      last_close:
+        type: number
+      low:
+        type: number
+    required:
+    - last_close
+    - high
+    - low
+    type: object
+  market.schema:
+    properties:
+      sector_growth:
+        type: number
+      trends:
+        items:
+          type: string
+        type: array
+    required:
+    - sector_growth
+    - trends
+    type: object
+  stock.schema:
+    properties:
+      current_price:
+        type: number
+      sentiment:
+        type: string
+      volume:
+        type: number
+    required:
+    - current_price
+    - volume
+    - sentiment
+    type: object
+$schema: http://json-schema.org/draft-07/schema#
