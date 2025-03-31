@@ -8,6 +8,7 @@ import Ajv, { ErrorObject } from 'ajv';
 import { ChatOpenAI, OpenAI } from '@langchain/openai';
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import yaml from 'js-yaml';
+import $RefParser from '@apidevtools/json-schema-ref-parser';
 
 /**
  * Helper function to read a file synchronously.
@@ -38,14 +39,14 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       };
     }
     const request = JSON.parse(event.body);
-    const { input, templateId: templateId, llmProvider, model } = request;
+    const { input, templateId, llmProvider, model } = request;
 
     // Ensure required fields are present.
     if (!input || !templateId || !llmProvider || !model) {
       return {
         statusCode: 400,
         body: JSON.stringify({
-          message: 'Missing required fields: input, template-id, llmProvider, or model',
+          message: 'Missing required fields: input, templateId, llmProvider, or model',
         }),
       };
     }
@@ -78,8 +79,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
         body: JSON.stringify({ message: `Input schema file ${inputSchemaRelative} not found` }),
       };
     }
-    const inputSchemaContent = loadFile(inputSchemaPath);
-    const inputSchema = yaml.load(inputSchemaContent) as object;
+    const inputSchema = await $RefParser.dereference(inputSchemaPath);
 
     // Validate the provided input against the input schema.
     const { valid, errors } = validateData(inputSchema, input);
@@ -98,7 +98,6 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     const prompt = compiledTemplate(input);
 
     // Choose LLM based on llmProvider. Currently, only "openai" is supported.
-
     let llm: ChatOpenAI | undefined;
     if (llmProvider.toLowerCase() === 'openai') {
       llm = new ChatOpenAI({ model: model });
@@ -109,21 +108,20 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       };
     }
 
-    // Optionally validate the output if an output schema is provided.
+    // Process output schema if provided.
     const outputSchemaRelative = frontmatter.output_schema;
     if (outputSchemaRelative) {
       const outputSchemaPath = path.join(__dirname, '..', 'schemas', outputSchemaRelative);
       if (!fs.existsSync(outputSchemaPath)) {
         return {
           statusCode: 500,
-          body: JSON.stringify({
-            message: `Output schema file ${outputSchemaRelative} not found`,
-          }),
+          body: JSON.stringify({ message: `Output schema file ${outputSchemaRelative} not found` }),
         };
       }
-      const outputSchemaContent = loadFile(outputSchemaPath);
-      const outputSchema = yaml.load(outputSchemaContent) as object;
+      // Dereference the output schema with an explicit basePath.
+      const outputSchema = await $RefParser.dereference(outputSchemaPath);
 
+      // Use the LLM with structured output.
       const modelWithStructure = llm!.withStructuredOutput(outputSchema);
       const result = await modelWithStructure.invoke(prompt);
       const { valid: validOutput, errors: outputErrors } = validateData(outputSchema, result);
@@ -136,18 +134,15 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
           }),
         };
       }
-
-      // Return the generated prompt and the result from the LLM.
       return {
         statusCode: 200,
         body: JSON.stringify({
+          request: input,
           prompt,
-          result,
+          response: result,
         }),
       };
     } else {
-      // Return the generated prompt and the result from the LLM.
-
       return {
         statusCode: 500,
         body: JSON.stringify({
